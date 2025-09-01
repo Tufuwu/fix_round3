@@ -1,19 +1,41 @@
-radare2-r2papi
-==============
+RapidPro Python Client
+======================
 
-Formerly known as r2pipe-api, but `papi` sounds better.
+[![Build Status](https://travis-ci.org/rapidpro/rapidpro-python.svg?branch=master)](https://travis-ci.org/rapidpro/rapidpro-python)
+[![Coverage Status](https://coveralls.io/repos/github/rapidpro/rapidpro-python/badge.svg?branch=master)](https://coveralls.io/github/rapidpro/rapidpro-python)
+[![PyPI Release](https://img.shields.io/pypi/v/rapidpro-python.svg)](https://pypi.python.org/pypi/rapidpro-python/)
 
-[![Rust](https://github.com/radareorg/radare2-r2papi/actions/workflows/rust.yml/badge.svg?branch=master)](https://github.com/radareorg/radare2-r2papi/actions/workflows/rust.yml)
-[![Python](https://github.com/radareorg/radare2-r2papi/actions/workflows/python.yml/badge.svg?branch=master)](https://github.com/radareorg/radare2-r2papi/actions/workflows/python.yml)
-[![Typescript](https://github.com/radareorg/radare2-r2papi/actions/workflows/typescript.yml/badge.svg?branch=master)](https://github.com/radareorg/radare2-r2papi/actions/workflows/typescript.yml)
+Official Python client library for the [RapidPro](http://rapidpro.github.io/rapidpro/). Supports latest Python 3.
 
-This repository contains a high-level API on top of r2pipe, abstracting
-the r2 commands with a human-friendly taste.
+Visit [here](http://rapidpro-python.readthedocs.org/) for complete documentation.
 
-As long as this API will require some discussion because it will serve
-as a way to redesign the R2 C Apis at some point, we must focus on
-practical use cases, flexibility, ortogonality and other ities.
+Installation
+------------
 
-Feel free to open issues, send PRs with proposals.
+```
+pip install rapidpro-python
+```
 
---pancake
+Example
+-------
+
+```python
+from temba_client.v2 import TembaClient
+client = TembaClient('rapidpro.io', 'your-api-token')
+for contact_batch in client.get_contacts(group='Reporters').iterfetches(retry_on_rate_exceed=True):
+    for contact in contact_batch:
+        print(contact.name)
+```
+
+If you don't know your API token then visit the [API Explorer](http://rapidpro.io/api/v2/explorer)
+
+Development
+-----------
+
+For discussions about future development, see the [RapidPro Developers Group](https://groups.google.com/forum/#!forum/rapidpro-dev).
+
+To run the tests:
+
+```
+nosetests --with-coverage --cover-erase --cover-package=temba_client --cover-html
+```
