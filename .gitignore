@@ -1,17 +1,49 @@
-*.pyc
-.vagrant
-*.egg-info
-build
-.tox
-flycheck-*
-flycheck_*
-dist
-.eggs
-.coverage
+# From: https://github.com/github/gitignore/blob/master/Python.gitignore
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Unit test / coverage reports
+.tox/
+.pytest_cache/
+
+# Environments
 .env
-.cache
-.DS_Store
-htmlcov
-TAGS
-AUTHORS
-ChangeLog
+.venv
+env/
+venv/
+# Custom: python2 venv
+venv2/
+
+# Sphinx documentation
+docs/_build/
+
+# mypy
+.mypy_cache/
+
+# --- CUSTOM ---
+
+# temp outputs for isort and flake8
+/isort.out
+/flake8.out

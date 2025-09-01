@@ -1,46 +1,37 @@
-name: Python Package
+name: Python package
 
 on:
   push:
-    tags:
-      - '*'
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-22.04
+
     strategy:
       matrix:
-        python-version: ['3.8']
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
-        run: |
-          pip install -e .
-          pip install astroid>=2.0
-          pip install pylint>=2.0
-      - name: Lint with pylint
-        run: |
-          pylint --rcfile=.pylintrc infinisdk setup.py
+        python-version: [3.8]
 
-  deploy:
-    if: github.ref_type == 'tag'
-    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.8'
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-      - name: Build and publish
-        env:
-          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-        run: |
-          python setup.py sdist bdist_wheel
-          twine upload dist/*
+    - uses: actions/checkout@v2
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: pip install tox
+
+    - name: Run tox
+      run: |
+        TOXENV=$(tox --listenvs | grep "py${{ matrix.python-version }}" | tr '\n' ',')
+        export TOXENV
+        tox
+      env:
+        TOX_ALLOWLIST_EXTERNAL: make,bash
+        TOXENV: py${{ matrix.python-version }}
