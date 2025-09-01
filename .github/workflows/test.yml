@@ -11,9 +11,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
+
     strategy:
       matrix:
-        python-version: [3.8]
+        python-version: [3.8, 3.9]  # Updated to include Python 3.9 instead of 3.7
+
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
@@ -21,13 +23,6 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
-      run: chmod +x ./.travis/install && ./.travis/install
+      run: pip install tox-travis
     - name: Run tests
-      env:
-        TOXENV: py38
-      run: chmod +x ./.travis/run && ./.travis/run tox
-    - name: Upload coverage to Coveralls
-      if: success()
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: coveralls
+      run: tox

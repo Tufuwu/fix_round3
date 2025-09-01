@@ -1,10 +1,26 @@
 root = true
 
-[*.py]
-max_line_length = 120
+[*]
+charset = utf-8
+end_of_line = lf
 indent_style = space
-indent_size = 4
-ignore_frosted_errors = E103
-skip = runtests.py,build
-balanced_wrapping = true
-not_skip = __init__.py
+insert_final_newline = true
+trim_trailing_whitespace = true
+ident_size = 4
+
+[*.md]
+ident_size = 2
+trim_trailing_whitespace = false
+
+[*.json]
+ident_size = 2
+
+[{.gitignore,.gitkeep,.editorconfig}]
+ident_size = 2
+
+[*.bat]
+indent_style = tab
+end_of_line = crlf
+
+[Makefile]
+ident_style = tab
