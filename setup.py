@@ -1,13 +1,9 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-# This file is part of censusgeocode.
-# https://github.com/fitnr/censusgeocode
-
-# Licensed under the General Public License (version 3)
-# http://opensource.org/licenses/LGPL-3.0
-# Copyright (c) 2015-9, Neil Freeman <contact@fakeisthenewreal.org>
-
-from setuptools import setup
-
-setup()
+from distutils.core import setup
+from setuptools import setup, find_packages
+setup(
+    name='Stregsystemet',
+    version='0.1',
+    author='FIT',
+    packages=find_packages(include=["stregsystem*", "kiosk*", "stregreport*", "treo*"]),
+    license='THE LIMFJORDS-PORTER-WARE LICENSE',
+)
