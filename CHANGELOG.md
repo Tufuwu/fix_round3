@@ -1,204 +1,247 @@
 # Changelog
 
-## 2.7.0 (2021-02-24)
+## [Unreleased]
 
-Note that this version changes the default value of the `background_load_all_history` option to `true`, but this will not change for existing installations. It is recommended to set it to `true` unless you experience performance issues. If you keep it at `false` you will experience these issues:
+## [0.1.7] - 2021-11-18
+### Added
+- Support for distinctness comparisons (`is_distinct_from` / `isnot_distinct_from`). Pull request [#144](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/144) by [wlhjason](https://github.com/wlhjason). Solves issue [#143](https://github.com/xzkostyan/clickhouse-sqlalchemy/issues/143).
+- [HTTP] Cert auth. Pull request [#128](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/128) by [evgG](https://github.com/evgG).
+- [HTTP] Session factories. Pull request [#131](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/131) by [carlosefr](https://github.com/carlosefr).
+- [HTTP] Raw engine execute. Pull request [#134](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/134) by [FishermanZzhang](https://github.com/FishermanZzhang).
+- [HTTP] DateTime('timezone') support. Pull request [#141](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/141) by [lance-plusai](https://github.com/lance-plusai).
+- Optional disabling engine reflection. Solves issue [#140](https://github.com/xzkostyan/clickhouse-sqlalchemy/issues/140).
+- `AFTER` clause in `ALTER TABLE ... ADD COLUMN`. Pull request [#153](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/153) by [eivasch](https://github.com/eivasch).
+-  Column default reflection from `DESCRIBE TABLE` default_expression. Pull request [#153](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/153) by [eivasch](https://github.com/eivasch).
 
-- Channels will not be shown as unread when wee-slack loads, even if there are unread messages. Messages which arrive after wee-slack has loaded however will mark the channel as unread.
-- If messages arrive while the connection to Slack is lost (e.g. during suspend), they will not appear in the hotlist.
+### Fixed
+- SAMPLE BY reflection. Solves issue [#127](https://github.com/xzkostyan/clickhouse-sqlalchemy/issues/127).
+- [HTTP] `verify` behavior in requests. Pull request [#128](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/128) by [evgG](https://github.com/evgG).
 
-The reason for these issues now being present with `background_load_all_history` set to `false` is that the API has changed, so we can't check for unread messages without loading the history anymore.
+## [0.1.6] - 2021-03-15
+### Added
+- [HTTP] Optional custom `requests.Session`. Pull request [#119](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/119) by [carlosefr](https://github.com/carlosefr).
+- DateTime64 type. Pull request [#116](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/116) by [aamalev](https://github.com/aamalev).
+- [HTTP] Keep HTTP connection open between queries. Pull request [#117](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/117) by [carlosefr](https://github.com/carlosefr).
 
-### Slack API changes
+### Fixed
+- [HTTP] Don't lose information on unicode conversion. Pull request [#120](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/120) by [carlosefr](https://github.com/carlosefr).
+- [HTTP] Fix server version parsing (non-numeric build). Pull request [#118](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/118) by [carlosefr](https://github.com/carlosefr).
+- [HTTP] Handle nullable columns. Pull request [#121](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/121) by [carlosefr](https://github.com/carlosefr).
+- Reflection for schema and views handling. Pull request [#125](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/125) by [hodgesrm](https://github.com/hodgesrm).
+- Expressions reflection in *MergeTree engines. Solves issue [#123](https://github.com/xzkostyan/clickhouse-sqlalchemy/issues/123). 
+- Columns compilation fix. Replace default dialect. Solves issue [#124](https://github.com/xzkostyan/clickhouse-sqlalchemy/issues/124).
+- [HTTP] Proper handling `verify` flag when parsing DSN. Pull request [#126](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/126) by [yhvicey](https://github.com/yhvicey).
 
-- Change to the new Conversations API. The old API will stop working on 2021-02-24, which means that older versions of wee-slack will not work after this (fixes #792).
+## [0.1.5] - 2020-12-14
+### Added
+- `MATERIALIZED` and `ALIAS` column options.
+- `LIMIT BY` clause support. Pull request [#97](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/97) by [ods](https://github.com/ods).
+- Basic engines reflection.
+- `TTL` param for *MergeTree engines. Pull request [#111](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/111) by [aamalev](https://github.com/aamalev).
 
-### Features
+### Changed
+- Session parametrization in tests.
+- Exclude table name from `DEFAULT` column option.
+- Allow multiple columns in `PARTITION BY`.
+- Replace `uuid1` with `uuid4` for automatic query_id generation. Solves issue [#99](https://github.com/xzkostyan/clickhouse-sqlalchemy/issues/99).
 
-- Rewrite how the channel history is fetched. This fixes some issues with fetching history after loosing connection and reconnecting (fixes #629, fixes #715, closes #732, PR #774).
-- Change `/rehistory` command to only print the buffer again, not fetch the history from Slack again, unless the `-remote` option is provided.
-- Better support for renaming buffers (fixes #563).
-- Use the `weechat.history.max_buffer_lines_number` option to decide how much backlog to keep.
-- Add an option `history_fetch_count` for how much history to fetch (fixes #376).
-- Rename buffers from `<team>.slack.com` to `slack.<team>` (fixes #709).
-- Include a prefix character in front of attachments.
-- Support colorizing attachment prefix or line (fixes #424, fixes #426).
-- Support creating channels with the new command `/slack create` (fixes #415).
-- Support custom indent in buflist for threads (see [the last comment](https://github.com/wee-slack/wee-slack/issues/783#issuecomment-658435310) in #783 for details).
-- Support global placement of the `weemoji.json` file.
-- Add support to disable teammate link previews (PR #815).
+### Fixed
+- Remove table names during `JOIN` with`USING` clause.
+- [Native] Case insensitive`VALUES` clause check for (%s)-templates.
+- Render `sqlalchemy.Boolean` as `UInt8` instead of `BOOLEAN`. Solves issue [#93](https://github.com/xzkostyan/clickhouse-sqlalchemy/issues/93).
+- Allow multiple columns in SummingMergeTree.
+- Proper `JOIN` clause rendering. Solves issue [#108](https://github.com/xzkostyan/clickhouse-sqlalchemy/issues/108).
 
-### Bug fixes
+### Removed
+- Drop Python 3.4 support due to urllib3 drop.
 
-- More robust handling of file modes (PR #771).
-- Prevent rendering two versions of the message text in certain cases.
-- Increase duration of typing notices, so they remain continously for a person that is continously typing, instead of disappearing and reappering every four seconds.
-- Fix typing indicators in buflist for DMs and MPDMs.
-- Only fetch members for joined channels when getting history, prevents unnecessary requests and rate limiting (fixes #775).
-- Fix issues with the `thread_messages_in_channel` option in certain channels (fixes #664).
-- Support notifying thread messages for old threads (parent message is out of the backlog) and before channel history is loaded (fixes #619, fixes #754).
-- Mark thread as read when closing buffer.
-- Store message ts in line tags instead of misusing `date_printed` (fixes #514).
-- Disable print hooks when printing old/debug messages (fixes #629, fixes #756).
-- When changing latest message in a channel, print new lines if needed (previously, the lines would be joined if the new version of the message had more lines than the old, and this is still the case for older messages).
-- Remove buffer notify option for unmuted buffers (fixes #746).
-- Fix buffers not changing color in buflist when (un)muted.
-- Fix thread bot messages appearing in channel instead of thread (fixes #749).
-- Set correct localvar type for threads in pms (fixes #789).
-- Use `slack_timeout` for websocket connection (relates to #793).
-- Don't display the typing indicator for muted conversations (PR #794).
-- Print error message when sending message fails (relates to #797).
-- Don't escape <>& in me messages (fixes #704, closes #822).
+## [0.1.4] - 2020-04-30
+### Fixed
+- `if_exists` and `on_cluster` AttributeError on table drop. Pull request [#94](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/94) by [vmarkovtsev](https://github.com/vmarkovtsev).
 
-## 2.6.0 (2020-05-06)
+## [0.1.3] - 2020-04-04
+### Added
+- Engines: ReplicatedReplacingMergeTree, VersionedCollapsingMergeTree, ReplicatedVersionedCollapsingMergeTree. Solves issue [#70](https://github.com/xzkostyan/clickhouse-sqlalchemy/issues/70).
+- File engine. Pull request [#72](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/72) by [armymaksim](https://github.com/armymaksim).
+- [HTTP] SSL certificates verification. Pull request [#75](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/75) by [NiyazNz](https://github.com/NiyazNz).
+- Decimal type reflection. Pull request [#74](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/74) by [armymaksim](https://github.com/armymaksim).
+- `ALTER DELETE`. Pull request [#81](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/81) by [sdrenn](https://github.com/sdrenn). Solves issue [#65](https://github.com/xzkostyan/clickhouse-sqlalchemy/issues/65).
+- `ALTER UPDATE`. Pull request [#82](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/82) by [sdrenn](https://github.com/sdrenn). Solves issue [#65](https://github.com/xzkostyan/clickhouse-sqlalchemy/issues/65).
+- [HTTP] Session tests, assorted fixes. Pull request [#73](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/73) by [hhell](https://github.com/hhell).
+- `FINAL` clause. Pull request [#79](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/79) by [sdrenn](https://github.com/sdrenn).
+- `CODEC` column option. Pull request [#89](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/89) by [athre0z](https://github.com/athre0z).
+- Add literal binds support to IP types. Improve IP types `IN` and `NOT IN` comparators. Pull request [#91](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/91) by [AchilleAsh](https://github.com/AchilleAsh).
 
-### Features
+### Changed
+- Minimal SQLAlchemy version supported is 1.3 now.
+- Named arguments should go after positional in ReplacingMergeTree, SummingMergeTree. Pull request [#80](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/80) by [sdrenn](https://github.com/sdrenn).
+- `sample` keyword argument changed to `sample_by` in *MergeTree.
+- `version_col,` keyword argument changed to `version` in ReplacingMergeTree.
 
-- Support subscribing to threads, showing which threads are subscribed to and marking threads as read (PR #758). Note that subscribing and marking threads as read only work when you use a session token. Read more about it [in the readme](https://github.com/wee-slack/wee-slack#4-add-your-slack-api-tokens).
-- Don't notify about threads when they're opened in the channel (PR #763). This can be controlled with the new option `notify_subscribed_threads`.
-- Support commands consisting of multiple lines (fixes #728).
-- Support toggling a reaction by right clicking on an emoji or emoji name.
-- Don't connect to the teams if auto connect is disabled (fixes #613).
-- Show footer and files in attachments.
-- Print error message when editing a message fails.
-- Don't print link fallback if it's equal to the link.
-- Improve deduplication of links in attachments.
-- Place `record_events` files in separate directories for each team.
+### Fixed
+- [Native] Remove (%s)-templates from `VALUES` clause.
+- [HTTP] `fetchone` elements order. Solves issue [#77](https://github.com/xzkostyan/clickhouse-sqlalchemy/issues/77).
+- Fix ReplacingMergeTree creation with no version.
+- License file now included in the package. Solves issue [#86](https://github.com/xzkostyan/clickhouse-sqlalchemy/issues/86).
+- Columns are now prefixed with table name if necessary. Solves issue [#35](https://github.com/xzkostyan/clickhouse-sqlalchemy/issues/35) and issue [#87](https://github.com/xzkostyan/clickhouse-sqlalchemy/issues/87).
+- Generate pure DLL without literals on Replicated tables creation.
 
-### Bug fixes
+## [0.1.2] - 2019-11-06
+### Fixed
+- Generic `Table` reflection in case of `autoload=True`.
+- [HTTP] Fix `get_schema_names`.
 
-- Prevent errors after running `/upgrade` (fixes #275, fixes #309, fixes #310).
-- Fix `record_events` not working (fixes #761). This bug was introduced in version 2.5.0.
-- Fix bug which made `/slack` complete thread hashes. This bug was introduced in version 2.5.0.
-- Fix `/slack status` not completing emojis when trying to complete without typing anything first.
-- Fix error on some deleted message events (notably Giphy previews).
+## [0.1.1] - 2019-10-31
+### Fixed
+- Set default strictness to `INNER` for join.
+- MergeTree `PARTITION BY` clause now accepts functions.
 
-### Slack API changes
+## [0.1.0] - 2019-10-31
+### Added
+- Enum without explicit size. Pull request [#69](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/69) by [ei-grad](https://github.com/ei-grad).
+- [Native] Passing all parameters to `clickhouse-driver` by using querystring in DSN.
+- [Native] Bypass `types_check` to `clickhouse-driver` via `execution_options`.
+- [Native] Store rowcount on `INSERT`. Returning rows count from `INSERT FROM SELECT` is not supported.
+- Python 3.8 in Travis CI build matrix.
+- Assorted fixes and improvements from a downstream internal fork. Pull request [#62](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/62) by [hhell](https://github.com/hhell).
+- LowCardinality type modifier. Pull request [#59](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/59) by [hhell](https://github.com/hhell).
+- [Native] IPv4 and IPv6 types. Pull request [#52](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/52) by [AchilleAsh](https://github.com/AchilleAsh).
+- Nested types. Pull request [#49](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/49) by [aCLr](https://github.com/aCLr).
+- Support for `FULL` parameter in `JOIN` rendering. Pull request [#50](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/50) by [PiwikPRO](https://github.com/PiwikPRO).
+- `ARRAY JOIN` clause. Pull request [#44](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/44) by [aCLr](https://github.com/aCLr).
 
-- Fix `/slack register` not working after Slack made their OAuth implementation stricter.
-- Use the `reply_count` property of a message instead of `replies`, because `replies` isn't provided anymore.
+### Fixed
+- [Native] Allow empty auth in DSN.
+- [Native] Allow default secure port.
+- Engine columns bool comparison errors.
+- [HTTP] `UnicodeDecodeError`. Pull request [#51](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/51) by [aminought](https://github.com/aminought).
 
-## 2.5.0 (2020-03-25)
+### Changed
+- Ability to use custom partition key and primary keys differs from sorting keys for *MergeTree. Pull request [#48](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/48) by [aCLr](https://github.com/aCLr).
+- Cursor performance increased in`fetchmany` and `fetchall`.
+- Add dependencies environment markers in setup.py. Pull request [#58](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/58) by [nitoqq](https://github.com/nitoqq).
+- Joins support refactor. Added `strictness` (`ANY`/`ALL`), `distribution` (`GLOBAL`) parameters. Pull request [#53](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/53) by [aCLr](https://github.com/aCLr).
 
-Note that you need to update the `weemoji.json` file when upgrading to this version.
+## [0.0.10] - 2019-02-05
+### Added
+- Self-signed certificate support. Pull request [#46](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/46) by [rrockru](https://github.com/rrockru).
+- UUID type. Pull request [#41](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/41) by [BolshakovNO](https://github.com/BolshakovNO).
+- Enum type reflection. Pull request [#33](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/33) by [sochi](https://github.com/sochi).
+- Decimal type. Pull request [#38](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/38) by [nikitka](https://github.com/nikitka).
 
-### Features
+### Changed
+- Minimal SQLAlchemy version supported is 1.2 now.
 
-- Add a proper page for OAuth which shows the code so you don't have to pull it out of the url.
-- Render emojis as emoji characters (fixes #465). Also allow them to be rendered both as emoji characters and as the name (PR #752).
-- Support sending reactions with emoji characters (fixes #236, fixes #575).
-- Add ability to broadcast a thread message to the rest of the channel (PR #753). Use `/reply -alsochannel` to do this.
-- Add support for Slack Blocks (fixes #726, PR #729).
-- Show away in away bar item when presence is away.
-- Set presence to active when switching buffer or calling `/slack back`.
-- Add options for hard coded colors (fixes #681).
-- Show reactions you have added in a different color (fixes #713).
-- Support using a different color for each thread suffix/prefix (fixes #716).
-- (Un)merge team buffers when `irc.look.server_buffer` is changed (fixes #712).
-- Show the parent message as the first message in a thread (fixes #705).
-- Support adding a token you already have with `/slack register <token>`.
-- Print error message when reaction couldn't be added/removed.
-- Print error if trying to use `/thread` in team buffer (fixes #737).
+### Fixed
+- Handling additional column`comment_expression` in `DESCRIBE TABLE` results during reflection (in ClickHouse server >= 18.15).
 
-### Bug fixes
+## [0.0.9] - 2019-01-21
+### Added
+- `ON CLUSTER` clause in `CREATE TABLE`, `DROP TABLE`.
 
-- Preserve thread channels across reconnections and `/rehistory` (fixes #714).
-- Set `highlight_words` for new channels and thread channels (fixes #736).
-- Reply to parent message if trying to reply to thread message (fixes #751).
-- Fix bug where not all members in shared channels or channels converted from public to private were shown.
-- Don't switch to the debug buffer when config is changed and `debug_mode` is on.
-- Print warning when having two tokens for the same team, instead of failing with 100 % cpu usage (fixes #734).
-- Fix bug when handling nicks with non-ascii characters on Python 2 (fixes #747). This bug was introduced in 2.4.0.
-- Readd tag `logger_backlog` for backlog messages. This was inadvertently removed in 2.4.0.
+### Fixed
+- Raw connection execute. Pull request [#40](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/40) by [AchilleAsh](https://github.com/AchilleAsh).
+Solves issue [#39](https://github.com/xzkostyan/clickhouse-sqlalchemy/issues/39).
 
-## 2.4.0 (2020-01-16)
+## [0.0.8] - 2018-11-25
+### Added
+- Streaming support via `yield_per`.
+- Python 3.7 in Travis CI build matrix.
 
-- Support regex flags i, m and s for message edits.
-- Allow %h (weechat home) replacement in download_location (PR #690).
-- Render "by invitation from" before reactions.
-- The command `/slack status` now prints the status if no arguments are given. Pass `-delete` to unset the status (fixes #574).
-- Add completion for channel names (fixes #235).
-- Add completion for all command arguments.
-- Allow completion of emoji with a prefix (fixes #580).
-- For `/slack upload` remove escape characters from path if file is not found (fixes #360).
-- For `/slack upload` resolve relative paths.
-- Expose more information in /whois (PR #700).
-- Add option `use_full_names` to only use full names (fixes #100).
-- Support nicks prefixed with @ in the `/msg` command.
-- Show member status in the `/slack channels` command.
-- Show handle when listing usergroup members.
-- Add support for the /invite command (fixes #698).
-- Add the usergroups you are a member of to highlight words (fixes #272, fixes #367, fixes #542).
-- Add a command to list the Slack teams.
-- Some changes on line tags, most notably irc_smart_filter is replaced with irc_join and irc_part because no smartness is implemented. Search for "tag" in the commit messages to see the other changes.
-- Prevent highlight in debug buffer.
-- Don't log backlog messages to the logfile (fixes #663).
-- Use proper nicks for mpdm names (fixes #498).
-- Fallback to full name instead of username if display name is not set.
-- Don't add deleted users to tab completion (fixes #703).
-- Print responses and errors from /slack slash command (fixes #369, fixes #374).
-- Fix option `record_events` (it was broken in 2.3.0).
-- Fix output of the `/topic` command (PR #691).
-- Set own nick to display name if set (fixes #692).
-- Prevent crash when having mpdm with an external user.
-- Prevent crash when script is reloaded if numpy is installed.
-- Support topic changes for private channels (fixes #697).
-- Fix attachment fields without titles (PR #707).
-- Don't turn `#name` into a link to the private message (fixes #587).
-- Render group notifications with @ instead of !.
-- Support using display names in the `/slack slash` command.
-- Print thread broadcast messages in parent channel (fixes #620).
-- Add basic support for private channels converted from public (fixes most of #664).
-- Better error messages.
-- Various small bug fixes, see the commit messages for details.
+### Fixed
+- Handling boolean values of `secure` query parameter of database url.
+- `Cursor.__iter__` now conforms with PEP 479. Pull request [#29](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/29) by [khvn26](https://github.com/khvn26).
+Solves issue [#27](https://github.com/xzkostyan/clickhouse-sqlalchemy/issues/27).
+- Multiprocessing/asyncio pickling issues. Pull request [#36](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/36) by [jhirniak](https://github.com/jhirniak).
+Solves issue [#13](https://github.com/xzkostyan/clickhouse-sqlalchemy/issues/13).
 
-## 2.3.0 (2019-05-05)
+## [0.0.7] - 2018-07-31
+### Fixed
+- Handling NULL values in arrays as strings. Pull request [#23](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/23) by [Joozty](https://github.com/Joozty).
 
-- Python 3 support. Python 2 will continue to be supported at least until the end of 2019 (fixes #258, fixes #331, fixes #555, fixes #576, fixes #598).
-- Improve detection of connection loss to the server, and improve reconnection (fixes #238, fixes #480, fixes #561, fixes #687).
-- Add option `files_download_location` to download uploaded files automatically (fixes #562, PR #666).
-- Add option `show_buflist_presence` to show/hide presence from buflist (PR #558).
-- Add command `/help` and add descriptions for all commands (fixes #363).
-- Remove command `/leave` (weechat aliases it to `/part` by default so we don't need to implement it specifically).
-- Remove command `/slack p` (only used for debugging).
-- Remove command `/slack openweb`, use `/slack linkarchive` instead.
-- Make command `/thread` open last thread in channel when called without arguments (PR #677).
-- Support command `/away -all` for marking you away on all servers/teams (fixes #596).
-- Show human readable names for user groups properly (PR #680).
-- Add tab completion of user groups (PR #680).
-- Support uploading files to threads (fixes #672, PR #683).
-- Include threads when marking latest message as read (PR #653).
-- Some fixes for formatting of messages (bold/italic) (PR #567).
-- Show human readable references (e.g. user names) instead of ids in topic (PR #665).
-- Show join/leave correctly in private channels (fixes #625, PR #684).
-- Print error if user/channel is not found when querying/joining (fixes #597).
-- Print a message when another client or the server closes an IM.
-- Various small bug fixes.
+## [0.0.6] - 2018-07-20
+### Added
+- Schema names as databases support. Pull request [#16](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/16) by [AchilleAsh](https://github.com/AchilleAsh).
+- DateTime type.
+- Reflection Array, FixedString and Nullable types.
 
-## 2.2.0 (2018-11-12)
+### Fixed
+- Pip install in editable mode.
 
-- Print user friendly error when trying to send a message in the team buffer (fixes #543).
-- Show inviter for join events (fixes #538).
-- Don't print whitespace before join/leave messages.
-- Colorize edits and reactions, using options `color_reaction_suffix` and `color_edited_suffix` (PR #608, PR #623, PR #660).
-- Use highlight notifications for MPDMs.
-- Notify of new mentions in threads and new messages in threads you participate in (fixes #572, fixes #535, PR #617).
-- Set correct tags for topic messages.
-- Support hiding activity from muted channels (fixes #456, PR #457). Adds a `muted_channels_activity` option to control if you see activity in muted channels.
-- Use an adaptive eventrouter timer (fixes #523, PR #631). Reduces CPU usage.
-- Add option `thread_messages_in_channel` to show thread messages in parent channel (fixes #546, PR #616).
-- Allow reactions and edit of messages in threads (fixes #416, fixes #442, fixes #534, PR #622).
-- Rename option `thread_suffix_color` to `color_thread_suffix` so color options are grouped together. The value that is set will be migrated.
-- Gray out muted channels in buflist, using option `color_buflist_muted_channels` (PR #644).
-- Fix loading history with deleted attachment (fixes #640, PR #641).
-- Add support for cursor mode and mouse mode (fixes #429, fixes #553, fixes #541, PR #626, PR #652, PR #650).
-- Fix typing and completion errors in team buffer (fixes #380, PR #638).
-- Match nicks with parenthesis, apostrophe and/or unicode (fixes #545, fixes #570, fixes #618, PR #649, PR #657).
-- Fix /whois when user has a status text set (fixes #624, PR #651).
-- Fix bug preventing first line in buffer from being changed (PR #655).
-- Fix /reply and /thread in relay clients (fixes #547, fixes #615).
-- Support using /thread for already opened threads (fixes #533).
+### Removed
+- Python 3.3 support.
 
-## 2.1.1 and earlier
+## [0.0.5] - 2017-11-06
+### Added
+- `JOIN` clause support via `tuple_()`.
+- Version detection in setup.py.
 
-Unfortunately, no changelog has been written for these versions.
+### Changed
+- Using native driver parameters substitution via pyformat.
+
+### Fixed
+- Binary mod operation compilation issue [#8](https://github.com/xzkostyan/clickhouse-sqlalchemy/issues/8).
+
+## [0.0.4] - 2017-10-03
+### Added
+- `SAMPLE` clause.
+- Code coverage.
+- Additional engines: AggregatingMergeTree, GraphiteMergeTree, ReplacingMergeTree, ReplicatedMergeTree,
+ReplicatedCollapsingMergeTree, ReplicatedAggregatingMergeTree, ReplicatedSummingMergeTree. Distributed,
+Log, TinyLog, Null.
+- Changelog.
+- Lambda functions generation.
+
+## [0.0.3] - 2017-07-16
+### Added
+- `extract('year', x)` alias to `toYear(x)`/`toMonth(x)`/`toDayOfMonth(x)`. Pull request [#2](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/2) by [gribanov-d](https://github.com/gribanov-d).
+- External tables in native interface support.
+- Nullable type support in `CREATE TABLE`.
+- `WITH TOTALS` clause support for `GROUP BY`.
+- Passing settings via `execution_options`.
+
+### Changed
+- Native driver elements reverse order issue fixed.
+- Fixed `count(expr)` rendering. Pull request [#3](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/3) by [gribanov-d](https://github.com/gribanov-d).
+- Fixed empty string parse error over HTTP. Pull request [#5](https://github.com/xzkostyan/clickhouse-sqlalchemy/pull/5) by [gribanov-d](https://github.com/gribanov-d).
+- Nested Array type generation fixed.
+- Structure refactored. 
+
+## [0.0.2] - 2017-06-23
+### Added
+- Travis CI.
+- flake8 syntax check.
+- Native (TCP) interface support.
+- Python 3.3+ support.
+
+### Changed
+- `ELSE` clause is required in `CASE`.
+
+## 0.0.1 - 2017-03-30
+### Added
+- HTTP/HTTPS protocol support.
+- Python 2.7 support.
+- Engine declaration support in `__table_args__`
+- `DROP TABLE IF EXISTS` clause.
+- Automatic registering as dialect `clickhouse://`.
+- Chunked `INSERT INTO` in one request.
+- Engines: MergeTree, CollapsingMergeTree, SummingMergeTree, Buffer, Memory. 
+
+[Unreleased]: https://github.com/xzkostyan/clickhouse-sqlalchemy/compare/0.1.7...HEAD
+[0.1.7]: https://github.com/xzkostyan/clickhouse-sqlalchemy/compare/0.1.6...0.1.7
+[0.1.6]: https://github.com/xzkostyan/clickhouse-sqlalchemy/compare/0.1.5...0.1.6
+[0.1.5]: https://github.com/xzkostyan/clickhouse-sqlalchemy/compare/0.1.4...0.1.5
+[0.1.4]: https://github.com/xzkostyan/clickhouse-sqlalchemy/compare/0.1.3...0.1.4
+[0.1.3]: https://github.com/xzkostyan/clickhouse-sqlalchemy/compare/0.1.2...0.1.3
+[0.1.2]: https://github.com/xzkostyan/clickhouse-sqlalchemy/compare/0.1.1...0.1.2
+[0.1.1]: https://github.com/xzkostyan/clickhouse-sqlalchemy/compare/0.1.0...0.1.1
+[0.1.0]: https://github.com/xzkostyan/clickhouse-sqlalchemy/compare/0.0.10...0.1.0
+[0.0.10]: https://github.com/xzkostyan/clickhouse-sqlalchemy/compare/0.0.9...0.0.10
+[0.0.9]: https://github.com/xzkostyan/clickhouse-sqlalchemy/compare/0.0.8...0.0.9
+[0.0.8]: https://github.com/xzkostyan/clickhouse-sqlalchemy/compare/0.0.7...0.0.8
+[0.0.7]: https://github.com/xzkostyan/clickhouse-sqlalchemy/compare/0.0.6...0.0.7
+[0.0.6]: https://github.com/xzkostyan/clickhouse-sqlalchemy/compare/0.0.5...0.0.6
+[0.0.5]: https://github.com/xzkostyan/clickhouse-sqlalchemy/compare/0.0.4...0.0.5
+[0.0.4]: https://github.com/xzkostyan/clickhouse-sqlalchemy/compare/0.0.3...0.0.4
+[0.0.3]: https://github.com/xzkostyan/clickhouse-sqlalchemy/compare/0.0.2...0.0.3
+[0.0.2]: https://github.com/xzkostyan/clickhouse-sqlalchemy/compare/0.0.1...0.0.2
