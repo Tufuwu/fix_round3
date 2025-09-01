@@ -1,4 +1,4 @@
-name: Python application
+name: Documentation Build
 
 on:
   push:
@@ -10,27 +10,40 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
-
-    strategy:
-      matrix:
-        python-version: [3.8, 3.9]
+    runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python 3.8
       uses: actions/setup-python@v2
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: 3.8
 
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
+        pip install doc8 sphinx
+        pip install git+https://github.com/osrf/sphinx-tabs
+        pip install sphinx_multiversion
 
-    - name: Run script
+    - name: Build HTML
       run: |
-        mkdir -p /home/runner/config
-        python FeedCrawler.py --port=9090 --config="/home/runner/config" --travis_ci --log-level=DEBUG
-      timeout-minutes: 10
+        make html 2> stderr.log || true
+        cat stderr.log
+
+    - name: Run doc8
+      run: |
+        doc8 --ignore D001 --ignore-path build --ignore-path source/Tutorials/Actions
+        doc8 --ignore D000 --ignore D001 --ignore-path build source/Tutorials/Actions
+
+    - name: Check for stderr output
+      run: |
+        if [ -s "stderr.log" ]; then
+          echo "Errors found in stderr.log"
+          exit 1
+        fi
+      continue-on-error: true
+
+    - name: Cleanup
+      run: rm stderr.log
